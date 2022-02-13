@@ -1,2 +1,2 @@
 # construct_roms
-Construct reduced-order models for Rayleigh-Benard convection
+Construct reduced order models (ROMs) for Rayleigh--B\'enard convection
