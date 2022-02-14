@@ -129,7 +129,7 @@ def construct_roms(mode_sel = 'hk', p_modes = [(1,1)],
             if overwrite != 'y':
                 end = timer()
                 print('Time = ' + str(end-start))
-                sys.exit()
+                return
         file = open(fname,'w')
         file.write('function f = hk' + str(num_modes) + '_rhs(x,a,s,k,R) \n')
         pstr = ' '.join(['p%i,%i' % mode for mode in p_modes]) 

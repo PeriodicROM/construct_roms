@@ -3,14 +3,14 @@ from setuptools import setup, find_packages
 with open("README.md", "r") as readme_file:
     readme = readme_file.read()
     
-requirements = ["ipython>=6", "numpy>=1", "sympy>=1.5"]
+requirements = ["ipython>=6", "numpy", "sympy"]
 
 description = ("A Python package to build reduced order models for " + 
               "Rayleigh-Benard convection")
 
 setup(
       name="construct_roms",
-      version="0.0.1",
+      version="0.0.3",
       author="Matt Olson",
       author_email="mlolson@umich.edu",
       description=description,
