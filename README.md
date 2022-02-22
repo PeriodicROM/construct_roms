@@ -1,9 +1,12 @@
 # Construct ROMs
-Construct ROMs is a Python package that builds distinguished reduced-order models (ROMs) that approximate the dynamics of 2D Rayleigh&ndash;Bénard convection. Features:
+Construct ROMs is a Python package that builds distinguished reduced-order models (ROMs) that approximate the dynamics of 2D Rayleigh&ndash;Bénard convection. The model domain is a horizontally periodic domain with stress-free, isothermal walls at top and bottom. ROMs are built using Galerkin expansion with Fourier basis functions.
+## Model equations:
+![Boussinesq equations](https://latex.codecogs.com/svg.image?\begin{align*}&space;\partial_t&space;\nabla^2&space;\psi&space;-&space;\\{\psi,&space;\nabla^2&space;\psi\\}&space;&=&space;\sigma&space;\nabla^4&space;\psi&space;&plus;&space;\sigma&space;\mathcal{R}&space;\partial_x&space;\theta,&space;\\\\\partial_t&space;\theta&space;-&space;\\{\psi,&space;\theta\\}&space;&=&space;\nabla^2&space;\theta&space;&plus;&space;\partial_x&space;\psi,\end{align*})
+
+## Features:
 - ROMs can be printed to the consoles in LaTeX format or printed to a MATLAB or Python ODE file for further analysis
-- ROMs built from Fourier-truncated Galerkin expansions applied to Rayleigh&ndash;Bénard PDE
-- Boundary conditions: horizontally periodic rectangular domain with free-slip, isothermal boundaries above and below
 - Models can be selected from the HK hierarchy or the user can input them manually
+- Include scale factors for easier SDP scaling
 - Can check certain conservation properties (energy and vorticity balance)
 
 # Package Requirements
