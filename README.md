@@ -14,7 +14,9 @@ Construct ROMs is a Python package that builds distinguished reduced-order model
 - sympy (Version 1.6 or later)
 
 # Installation
-To install the package, download or clone this repository and use `from constructROM import construct_roms` from the directory containing the package.
+To install the package, either:
+- download or clone this repository and use `from constructROM import construct_roms` from the directory containing the package, OR
+- install package directly using `pip install construct-roms` then `from constructROM import contruct_roms`
 
 # Instructions
 To construct a system of ROMs, use the command `construct_roms(*args)`. Options can be passed as function arguments as detailed below.
