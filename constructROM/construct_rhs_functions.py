@@ -2,7 +2,8 @@ import sympy as sym
 import numpy as np
 
 
-def construct_psi(p_modes, t_modes, a=None, dissip_limit=False):
+def construct_psi(p_modes, t_modes, scaling="unit cube",
+                  a=None, dissip_limit=False):
     """
     Construct right-hand side of ODEs for psi modes
 
@@ -13,6 +14,12 @@ def construct_psi(p_modes, t_modes, a=None, dissip_limit=False):
         Each tuple contains the horizontal and vertical wavenumbers.
     t_modes : list
         List of theta modes, represented as tuples.
+    scaling : string, optional
+        Variable scaling used in model
+        "unit cube" : psi -> R^(1/2)*psi, t -> R^(-1/2)*t, useful for
+            SDP computations (Default)
+        "standard" : standard scaling of Rayleigh-Benard
+        "normalize theta" : theta -> theta/R, used in some prior ROM studies
     a : array, optional
         Scale factors for model rescaling. Can be numbers or symbols.
         To produce unscaled model, pass in integer array of ones.
@@ -32,7 +39,8 @@ def construct_psi(p_modes, t_modes, a=None, dissip_limit=False):
         sigma = 1
     else:
         sigma = sym.Symbol('sigma')
-    R = sym.Symbol('r')
+    R = sym.Symbol('R')
+    ra = sym.Symbol('r') #R^(1/2)
     
     if a is None:
         a = np.ones(len(p_modes) + len(t_modes), dtype=int)
@@ -44,7 +52,7 @@ def construct_psi(p_modes, t_modes, a=None, dissip_limit=False):
     for idx,mode in enumerate(p_modes):
         
         #Compute linear terms
-        rhs_term1 = -sigma*rho_p[idx]*psi[idx]/R
+        rhs_term1 = -sigma*rho_p[idx]*psi[idx]
         sgn = sum(mode)
         if mode in t_modes:
             t_index = t_modes.index(mode)
@@ -53,6 +61,11 @@ def construct_psi(p_modes, t_modes, a=None, dissip_limit=False):
             rhs_term2 = coeff1*coeff2*theta[t_index]/rho_p[idx]
         else:
             rhs_term2 = 0
+            
+        if scaling == 'unit cube':
+            rhs_term1 = rhs_term1/ra
+        elif scaling == 'standard':
+            rhs_term2 = rhs_term2*R
             
         
         rho_p = [(mode[0]*k)**2 + mode[1]**2 for mode in p_modes]
@@ -91,7 +104,8 @@ def construct_psi(p_modes, t_modes, a=None, dissip_limit=False):
         
     return rhs_psi
 
-def construct_theta(p_modes, t_modes, a=None, dissip_limit=False):
+def construct_theta(p_modes, t_modes, scaling="unit cube",
+                    a=None, dissip_limit=False):
     """
     Construct right-hand side of ODEs for theta modes
 
@@ -102,6 +116,12 @@ def construct_theta(p_modes, t_modes, a=None, dissip_limit=False):
         Each tuple contains the horizontal and vertical wavenumbers.
     t_modes : list
         List of theta modes, represented as tuples.
+    scaling : string, optional
+        Variable scaling used in model
+        "unit cube" : psi -> R^(1/2)*psi, t -> R^(-1/2)*t, useful for
+            SDP computations (Default)
+        "standard" : standard scaling of Rayleigh-Benard
+        "normalize theta" : theta -> theta/R, used in some prior ROM studies
     a : array, optional
         Scale factors for model rescaling. Can be numbers or symbols.
         To produce unscaled model, pass in integer array of ones.
@@ -117,7 +137,9 @@ def construct_theta(p_modes, t_modes, a=None, dissip_limit=False):
     psi = np.array([sym.symbols('psi_%i_%i' % mode) for mode in p_modes])
     theta = np.array([sym.symbols('theta_%i_%i' % mode) for mode in t_modes])
     k = sym.Symbol('k')
-    R = sym.Symbol('r')
+    R = sym.Symbol('R')
+    ra = sym.Symbol('r')
+    
     if a is None:
         a = np.ones(len(p_modes) + len(t_modes), dtype=int)
     
@@ -128,7 +150,7 @@ def construct_theta(p_modes, t_modes, a=None, dissip_limit=False):
     for idx,mode in enumerate(t_modes):
         
         #Compute linear terms
-        rhs_term1 = -rho_t[idx]*theta[idx]/R
+        rhs_term1 = -rho_t[idx]*theta[idx]
         sgn = sum(mode)
         if mode in p_modes:
             p_index = p_modes.index(mode)
@@ -137,6 +159,12 @@ def construct_theta(p_modes, t_modes, a=None, dissip_limit=False):
             rhs_term2 = coeff1*coeff2*psi[p_index]
         else:
             rhs_term2 = 0
+            
+        if scaling == 'unit cube':
+            rhs_term1 = rhs_term1/ra
+        elif scaling == 'normalize theta':
+            R = sym.Symbol('R')
+            rhs_term2 = rhs_term2*R
             
         m, n = mode 
         
